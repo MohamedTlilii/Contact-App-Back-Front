@@ -12,57 +12,27 @@ module.exports = async (req, res) => {
       });
     }
 
-    if (!email) {
-        return res
-          .status(401)
-          .json({
-            status: false,
-            error: "Email is required",
-          });
-      }
-      
-      let validateEmail = email.match(/@/);
-      if (!validateEmail) {
-        return res
-          .status(401)
-          .json({
-            status: false,
-            error: "Email must have @",
-          });
-      }
-
-
-
-
-
-
-
-
     if (existedUserName) {
       return res.status(401).json({
         status: true,
         message: "This username is already used, please try another one ",
       });
-    }if(!password){
-        return res
-        .status(401)
-        .json({
-          status: false,
-          error:
-            "Password is requird",
-        });
+    }
+    if (!password) {
+      return res.status(401).json({
+        status: false,
+        error: "Password is requird",
+      });
     }
     let validatePassword = password.match(
       /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.*@-_).{8,}$/
     );
     if (!validatePassword) {
-      return res
-        .status(401)
-        .json({
-          status: false,
-          error:
-            "Password must contain minimum length of 8 characters, at least one uppercasse letter, one lowercase letter, onedigit, and one special character",
-        });
+      return res.status(401).json({
+        status: false,
+        error:
+          "Password must contain minimum length of 8 characters, at least one uppercasse letter, one lowercase letter, onedigit, and one special character",
+      });
     }
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -76,9 +46,9 @@ module.exports = async (req, res) => {
       .status(200)
       .json({ status: true, message: "User was created successfuly" });
   } catch (error) {
-    if (errot) {
+    if (error) {
       console.log(error);
     }
-    res.status(401).json({ status: false, error:error.errors });
+    res.status(401).json({ status: false, error: error.errors });
   }
 };

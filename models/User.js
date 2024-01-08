@@ -13,11 +13,11 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      // required: [true, "Email is required filed"],
-      // Math: [
-      //   /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-      //   "This is invalid email",
-      // ],
+      required: [true, "Email is required filed"],
+      match: [
+        /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
+        "This is invalid email",
+      ],
     },
   },
   {
