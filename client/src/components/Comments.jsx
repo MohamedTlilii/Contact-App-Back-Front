@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useFetch } from "../utils/useFetch";
-import { adminUrl } from "../utils/url";
+import { adminUrl, url } from "../utils/url";
 import {
   Icon,
   CommentText,
@@ -13,12 +13,20 @@ import {
   CommentAuthor,
   Comment,
   Header,
+  Form,
+  Button,
 } from "semantic-ui-react";
 import axios from "axios";
 function Comments({ postId }) {
   let token = localStorage.getItem("token");
-  const [loading, setLoading] = useState(false);
   let isAdmin = localStorage.getItem("isAdmin");
+  let isUser = localStorage.getItem("isUser");
+  let userId = localStorage.getItem("id");
+  const [loading, setLoading] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
+  const [commentID, setCommentId] = useState();
+  const [commentBody, setCommentBody] = useState("");
+  const [newCommentBody, setNewCommentBody] = useState({});
   const { data, error } = useFetch(`${adminUrl}/comments/${postId}`, token);
   const handleAdminDeleteComment = (commentId) => {
     setLoading(true);
@@ -36,9 +44,52 @@ function Comments({ postId }) {
         console.dir(err);
       });
   };
+  const handleUserDeleteComment = (commentId) => {
+    setLoading(true);
+    axios
+      .delete(
+        `https://contactapp-api-uas9.onrender.com/api/user/deleteComment/${commentId}`,
+        { headers: { token } }
+      )
+      .then((res) => {
+        setLoading(false);
+        console.log(res);
+      })
+      .catch((err) => {
+        setLoading(false);
+        console.dir(err);
+      });
+  };
+  const handleAddComment = () => {
+    axios
+      .post(
+        `${url}/addComment/${postId}`,
+        { commentBody },
+        {
+          headers: { token },
+        }
+      )
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => console.dir(err));
+  };
+  const handleEditComment = (commentId) => {
+    setShowEdit(false);
+    axios
+      .put(`${url}/update/${commentId}`, newCommentBody, {
+        headers: { token },
+      })
+      .then((res) => {
+        console.log(res);
+      })
+      .catch((err) => {
+        console.dir(err);
+      });
+  };
   return (
     <div>
-      <details>
+      <details style={{ cursor: "pointer" }}>
         <summary> {data?.length} Comment(s)</summary>
         <CommentGroup>
           <Header as="h3" dividing>
@@ -65,7 +116,34 @@ function Comments({ postId }) {
                         {hourDate.substr(0, hourDate?.length - 8)}
                       </div>
                     </CommentMetadata>
-                    <CommentText>{comment.commentBody}</CommentText>
+                    {showEdit && commentID === comment._id ? (
+                      <Form>
+                        <Form.Input
+                          type="text"
+                          onChange={(e) => {
+                            setNewCommentBody({ commentBody: e.target.value });
+                          }}
+                          defaultValue={comment.commentBody}
+                        />
+                        <Button
+                          onClick={() => {
+                            handleEditComment(comment._id);
+                          }}
+                        >
+                          Save
+                        </Button>
+                        <Button
+                        color="black"
+                          onClick={() => {
+                            setShowEdit(false);
+                          }}
+                        >
+                          Cancel
+                        </Button>
+                      </Form>
+                    ) : (
+                      <CommentText>{comment.commentBody}</CommentText>
+                    )}
                     {isAdmin === "true" && (
                       <CommentActions>
                         {loading ? (
@@ -81,6 +159,33 @@ function Comments({ postId }) {
                         )}
                       </CommentActions>
                     )}
+                    {isUser === "true" && comment.userId._id === userId && (
+                      <CommentActions>
+                        {loading ? (
+                          <Icon name="circle notched" loading />
+                        ) : (
+                          <>
+                            <CommentAction
+                              onClick={() => {
+                                handleUserDeleteComment(comment._id);
+                              }}
+                            >
+                              Delete
+                            </CommentAction>
+                            {!showEdit && (
+                              <CommentAction
+                                onClick={() => {
+                                  setCommentId(comment._id);
+                                  setShowEdit(true);
+                                }}
+                              >
+                                Edit
+                              </CommentAction>
+                            )}
+                          </>
+                        )}
+                      </CommentActions>
+                    )}
                   </CommentContent>
                 </Comment>
               );
@@ -88,6 +193,21 @@ function Comments({ postId }) {
           ) : (
             <h6>No comments yet</h6>
           )}
+          <Form>
+            <Form.Input
+              type="text"
+              onChange={(e) => {
+                setCommentBody(e.target.value);
+              }}
+            />
+            <Button
+              onClick={() => {
+                handleAddComment();
+              }}
+            >
+              Comment
+            </Button>
+          </Form>
         </CommentGroup>
       </details>
     </div>

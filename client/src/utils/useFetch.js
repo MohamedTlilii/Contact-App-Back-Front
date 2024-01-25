@@ -11,10 +11,7 @@ export const useFetch = (url, token) => {
         setData(res.data.data);
       })
       .catch((err) => {
-        if (err.response.status === 404) {
-          setError("404 NOT FOUND");
-          console.dir(err);
-        }
+        console.dir(err);
       });
   }, [data, url, token]);
   return { data, error };

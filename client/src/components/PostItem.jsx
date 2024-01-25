@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React  from "react";
 import Comments from "./Comments";
 import {
   Button,
@@ -10,7 +10,7 @@ import {
   Image,
 } from "semantic-ui-react";
 function PostItem({ postBody, image, createdAt, _id }) {
-  const [commentsNbr, setCommentsNbr] = useState(0);
+  let isAdmin = localStorage.getItem("isAdmin");
   return (
     <Card>
       <Image src={image} wrapped ui={false} />
@@ -26,9 +26,11 @@ function PostItem({ postBody, image, createdAt, _id }) {
         <Icon name="calendar" />
         {createdAt}
       </CardContent>
-      <ButtonGroup>
-        <Button color="red">Delete</Button>
-      </ButtonGroup>
+      {isAdmin === "true" && (
+        <ButtonGroup>
+          <Button color="red">Delete</Button>
+        </ButtonGroup>
+      )}
     </Card>
   );
 }

@@ -43,6 +43,16 @@ function NavBar() {
                 Contacts
               </NavLink>
             </li>
+            <li>
+              <NavLink
+                className={({ isActive }) => {
+                  return isActive ? activeStyle : null;
+                }}
+                to="/posts"
+              >
+                Posts
+              </NavLink>
+            </li>
           </>
         ) : (
           token &&

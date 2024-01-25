@@ -20,6 +20,7 @@ function Login() {
         localStorage.setItem("token", res.data.data.token)
         localStorage.setItem("isUser", res.data.data.isUser)
         localStorage.setItem("isBanned", res.data.data.isBanned)
+        localStorage.setItem("id", res.data.data.id);
         setTimeout(() => {
         setLoading(false);
           navigate("/profile");

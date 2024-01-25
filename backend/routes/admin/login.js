@@ -7,6 +7,11 @@ module.exports = async (req, res) => {
     const SECRET_KEY = process.env.SECRET_KEY;
     let { email, password } = req.body;
     let admin = await Admin.findOne({ email });
+    if (!admin) {
+      return res
+        .status(401)
+        .json({ status: false, error: "Wrong email or password" });
+    }
     const testPassword = await bcrypt.compare(password, admin.password);
     if (!testPassword) {
       return res

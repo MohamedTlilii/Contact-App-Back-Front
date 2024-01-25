@@ -5,7 +5,7 @@ import { useFetch } from "../utils/useFetch";
 import ContactItem from "../components/ContactItem";
 function Contacts() {
   let token = localStorage.getItem("token");
-  let { data } = useFetch(url, token);
+  let { data } = useFetch(`${url}/contacts`, token);
 
   return (
     <div className="min-h-[80vh] flex justify-center items-center">

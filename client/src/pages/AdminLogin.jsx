@@ -3,19 +3,18 @@ import { Button, Form, Checkbox } from "semantic-ui-react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { MessageHeader, Message } from "semantic-ui-react";
+import {adminUrl} from "../utils/url"
 function Login() {
   const navigate = useNavigate();
   const [showPass, setShowPass] = useState(false);
   const [loginData, setLoginData] = useState({});
+  console.log(loginData)
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const handleLogin = () => {
     setLoading(true);
     axios
-      .post(
-        "https://contactapp-api-uas9.onrender.com/api/admin/login",
-        loginData
-      )
+      .post(`${adminUrl}/login`, loginData)
       .then((res) => {
         localStorage.setItem("token", res.data.data.token);
         localStorage.setItem("isAdmin", res.data.data.isAdmin);
